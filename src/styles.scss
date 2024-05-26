@@ -1,0 +1,33 @@
+.container{
+    max-width: calc(1200px);
+    width: calc(100% - 100px);
+    margin: 0 auto;
+}
+
+.sans-serif{
+    font-family: "Inter", sans-serif;
+    }
+
+.serif{
+    font-family: "Lora", serif;
+    }
+
+.mono{
+    font-family: "Inconsolata", monospace;
+    }
+
+.dark-theme{
+    --bg-color: #050505;
+    --text-color: #f1f1f1;
+    --highlight-text-color: #757575;
+    --line-color: #3a3a3a;
+    --purple: #a445ed;
+    }
+
+.light-theme{
+    --bg-color: #f1f1f1;
+    --text-color: #050505;
+    --highlight-text-color: #757575;
+    --line-color: #e9e9e9;
+    --purple: #a445ed;
+    }
