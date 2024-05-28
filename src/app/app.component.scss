@@ -1,0 +1,10 @@
+*{
+    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+}
+
+.content{
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    height: 100vh;
+    overflow: hidden;
+}

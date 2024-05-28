@@ -3,21 +3,21 @@
 
     <div class="config">
         <div class="change-font" (click)="toggleFont($event)">
-            <span class="current-font">Serif</span>
-            <i class="fi fi-ts-angle-small-down arrow-down"></i>
+            <span class="current-font" [@fadeInOut]="fadeInOutState">{{selectedFont}}</span>
+            <i class="fi fi-ss-angle-small-down arrow-down"></i>
             <div *ngIf="isFontOpen" @slideUpDown class="font-list fl">
-                <span class="serif-font fl">Serif</span>
-                <span class="sans-seriffont fl">Sans Serif</span>
-                <span class="mono-font fl">Mono</span>
+                <span [ngClass]="{'selected' : selectedFont === 'Serif'}" (click)="changeFont('Serif')" class="serif-font fl">Serif</span>
+                <span [ngClass]="{'selected' : selectedFont === 'Sans-Serif'}" (click)="changeFont('Sans-Serif')"  class="sans-serif-font fl">Sans Serif</span>
+                <span [ngClass]="{'selected' : selectedFont === 'Mono'}" (click)="changeFont('Mono')" class="mono-font fl">Mono</span>
             </div>
         </div>
         <div class="v-separator"></div>
         <div class="switch-theme">
             <label class="switch">
-                <input type="checkbox">
+                <input type="checkbox" (change)="toggleTheme()">
                 <span class="slider"></span>
             </label>
-            <i class="fi fi-ts-moon moon-icon"></i>
+            <i class="fi fi-rs-moon moon-icon"></i>
         </div>
     </div>
 </nav>

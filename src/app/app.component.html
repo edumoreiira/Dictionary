@@ -1,3 +1,3 @@
-<div class="light-theme sans-serif">
-  <app-navbar/>
+<div [ngClass]="{'light-theme': !darkTheme, 'dark-theme' : darkTheme}" class="{{selectedFont}} content">
+  <app-navbar (themeChanged)="onThemeChange($event)" (fontChanged)="onFontChange($event)" />
 </div>

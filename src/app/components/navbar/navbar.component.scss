@@ -17,10 +17,16 @@ nav{
             cursor: pointer;
             display: flex;
             gap: .5em;
+            .arrow-down{
+                color: var(--purple);
+            }
+            .current-font{
+                font-weight: 600;
+            }
             .font-list{
                 cursor: auto;
                 border-radius: .7em;
-                width: min(100vh, 100px);
+                width: min(100vh, 150px);
                 // background-color: wheat;
                 box-shadow: rgba(0, 0, 0, 0.068) 0px 0px 20px;
                 margin-top: 1em;
@@ -37,6 +43,9 @@ nav{
                         color: var(--purple);
                     }
                 }
+                span.selected{
+                    color: var(--purple);
+                }
             }
         }
         .v-separator{
@@ -49,6 +58,10 @@ nav{
             display: flex;
             align-items: center;
             gap: 1em;
+            .moon-icon{
+                color: var(--moon);
+                transform: rotate(-45deg);
+            }
             .switch{
                 input{
                     visibility: hidden;

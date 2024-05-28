@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 
 const slideUpDown = trigger('slideUpDown', [
   state('void', style({
@@ -18,16 +18,37 @@ const slideUpDown = trigger('slideUpDown', [
     animate('.3s ease-in-out')
   ]),
 ]);
+
+const fadeInOut = trigger('fadeInOut', [
+  state('in', style({ opacity: 1 })),
+  state('out', style({ opacity: 0, transform: 'translateY(50%)' })),
+  transition('out => in', [
+    animate('.2s ease-in-out')
+  ]),
+  transition('in => out', [
+    animate('.2s ease-in-out')
+  ])
+
+]);
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  animations: [slideUpDown]
+  animations: [slideUpDown, fadeInOut]
 })
 export class NavbarComponent {
   
+  @Output() fontChanged = new EventEmitter<string>();
+  @Output() themeChanged = new EventEmitter<boolean>();
+  selectedFont: string = 'Serif';
+  isFontOpen: boolean = false;
+  fadeInOutState: string = 'in';
+  darkTheme: boolean = false;
+
+  //Verifica se o click foi fora da div change-font
   @HostListener('document:click', ['$event'])
   clickOut(event: MouseEvent){
     const fontElement = document.querySelector('.change-font');
@@ -35,9 +56,7 @@ export class NavbarComponent {
     if(!fontElement?.contains(event.target as Node)){
       this.isFontOpen = false;
     }
-
   }
-  isFontOpen = false;
 
   toggleFont(event: MouseEvent){
     const target = event.target as HTMLElement;
@@ -46,5 +65,23 @@ export class NavbarComponent {
     }
 
     this.isFontOpen = !this.isFontOpen;
+  }
+
+  changeFont(font: string){
+    this.isFontOpen = false;
+    
+    if(font === this.selectedFont) return
+    // animacao ao trocar de nome
+    this.fadeInOutState = 'out';
+    setTimeout(() => {
+      this.fadeInOutState = 'in';
+      this.selectedFont = font;
+      this.fontChanged.emit(this.selectedFont);
+    },200);
+  }
+
+  toggleTheme(){
+    this.darkTheme = !this.darkTheme
+    this.themeChanged.emit(this.darkTheme);
   }
 }
