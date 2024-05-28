@@ -2,13 +2,13 @@
     <img src="assets/images/dictionary-logo.svg" alt="">
 
     <div class="config">
-        <div class="change-font">
+        <div class="change-font" (click)="toggleFont($event)">
             <span class="current-font">Serif</span>
             <i class="fi fi-ts-angle-small-down arrow-down"></i>
-            <div class="font-list">
-                <span class="serif-font">Serif</span>
-                <span class="sans-seriffont">Sans Serif</span>
-                <span class="mono-font">Mono</span>
+            <div *ngIf="isFontOpen" @slideUpDown class="font-list fl">
+                <span class="serif-font fl">Serif</span>
+                <span class="sans-seriffont fl">Sans Serif</span>
+                <span class="mono-font fl">Mono</span>
             </div>
         </div>
         <div class="v-separator"></div>

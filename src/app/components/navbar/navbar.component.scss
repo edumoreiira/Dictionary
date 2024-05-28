@@ -14,9 +14,11 @@ nav{
         gap: 1em;
         position: relative;
         .change-font{
+            cursor: pointer;
             display: flex;
             gap: .5em;
             .font-list{
+                cursor: auto;
                 border-radius: .7em;
                 width: min(100vh, 100px);
                 // background-color: wheat;
@@ -29,6 +31,12 @@ nav{
                 gap: 1em;
                 padding: 1.5em;
                 overflow: hidden;
+                span{
+                    cursor: pointer;
+                    &:hover{
+                        color: var(--purple);
+                    }
+                }
             }
         }
         .v-separator{
