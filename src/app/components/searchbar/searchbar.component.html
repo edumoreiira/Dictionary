@@ -1,0 +1,4 @@
+<div class="searchbar">
+    <input #searchInput (keyup.enter)="submit(searchInput.value)" type="text" class="search" placeholder="Search for any word...">
+    <i (click)="submit(searchInput.value)" class="fi fi-rr-search search-icon"></i>
+</div>

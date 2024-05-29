@@ -25,9 +25,10 @@ nav{
             }
             .font-list{
                 cursor: auto;
+                z-index: 2;
                 border-radius: .7em;
                 width: min(100vh, 150px);
-                // background-color: wheat;
+                background-color: white;
                 box-shadow: rgba(0, 0, 0, 0.068) 0px 0px 20px;
                 margin-top: 1em;
                 top: 100%;
