@@ -1,18 +1,32 @@
 <main class="container">
     <app-searchbar (searchInput)="searchDictionary($event)"/>
-    <div class="keyword">
-        <div class="word-wrapper">
-            <h1 class="word">keyboard</h1>
-            <span class="pronunciation">/kibod/</span>
+    <div *ngIf="$dictionary | async as dictionary" class="dictionary">
+        <div class="keyword">
+            <div class="word-wrapper">
+                <h1 class="word">{{dictionary[0].word}}</h1>
+                <span class="pronunciation">{{dictionary[0].phonetic}}</span>
+            </div>
+            <button type="button" class="pronouncing-audio">play</button>
         </div>
-        <button type="button" class="pronouncing-audio">play</button>
-    </div>
-    <div class="meanings">
-        <h3 class="part-of-speech">noun</h3>
-        <h4 class="meaning">Meaning</h4>
-        <ul class="definitions">
-            
-        </ul>
 
+        <div *ngFor="let content of dictionary" class="definitions-content">
+            <div *ngFor="let meaning of content.meanings" class="meanings">
+                <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
+                <h4 class="meaning">Meaning</h4>
+                <ul class="definitions">
+                    <li *ngFor="let item of meaning.definitions" class="definition">
+                        <p>{{item.definition}}</p>
+                    </li>
+                </ul>
+                
+                <div *ngIf="meaning.synonyms.length >= 1" class="synonyms">
+                    <h4 class="synonym-title">Synonms</h4>
+                    <ul class="synonym-list">
+                        <li *ngFor="let synonym of meaning.synonyms" class="synonym-item"><span>{{synonym}}</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
     </div>
 </main>

@@ -20,7 +20,7 @@ export class DictionaryComponent {
 
   }
 
-  $teste = new Observable<Dictionary[]>();
+  $dictionary = new Observable<Dictionary[]>();
 
   playAudio(){
     const audio = new Audio('https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3');
@@ -28,7 +28,6 @@ export class DictionaryComponent {
   }
   
   searchDictionary(searchValue: string){
-    this.$teste = this.dictionaryService.requestWord(searchValue);
-    // this.$teste.subscribe(a=>{console.log(a[0].word)})
+    this.$dictionary = this.dictionaryService.requestWord(searchValue);
   }
 }

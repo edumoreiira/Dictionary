@@ -1,5 +1,6 @@
 export interface Dictionary{
     word: string,
+    phonetic: string;
     phonetics: Phonetics[],
     meanings: Meanings[],
     license: License,
@@ -18,7 +19,9 @@ interface License{
 
 interface Meanings{
     partOfSpeech: string,
-    definitions: Definitions[]
+    definitions: Definitions[],
+    synonyms: string[],
+    antonyms: string[]
 }
 
 interface Definitions{
