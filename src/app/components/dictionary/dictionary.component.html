@@ -1,11 +1,11 @@
 <main class="container">
-    <app-searchbar/>
+    <app-searchbar (searchInput)="searchDictionary($event)"/>
     <div class="keyword">
         <div class="word-wrapper">
             <h1 class="word">keyboard</h1>
             <span class="pronunciation">/kibod/</span>
         </div>
-        <button type="button" (click)="playAudio()" class="pronouncing-audio">play</button>
+        <button type="button" class="pronouncing-audio">play</button>
     </div>
     <div class="meanings">
         <h3 class="part-of-speech">noun</h3>

@@ -16,12 +16,4 @@ export class AppComponent {
 
   selectedFont: string = 'Serif';
   darkTheme: boolean = false;
-  
-  onFontChange(font: string){
-    this.selectedFont = font;
-  }
-
-  onThemeChange(theme: boolean){
-    this.darkTheme = theme;
-  }
 }

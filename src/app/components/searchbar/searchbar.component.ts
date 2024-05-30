@@ -12,7 +12,6 @@ export class SearchbarComponent {
   @Output() searchInput = new EventEmitter<string>();
 
   submit(search: string){
-    console.log(search);
     this.searchInput.emit(search);
   }
 }
