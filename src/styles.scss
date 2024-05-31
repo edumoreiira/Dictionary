@@ -31,6 +31,7 @@
     --purple: #a445ed;
     --moon: #a445ed;
     --search-bg: hsl(0deg, 0%, 12%);
+    --gray: #757575;
     }
 
 .light-theme{
@@ -41,4 +42,9 @@
     --purple: #a445ed;
     --moon: gray;
     --search-bg: hsl(0deg, 0%, 96%);
+    --gray: #757575;
     }
+
+.fi{
+    display: flex;
+}

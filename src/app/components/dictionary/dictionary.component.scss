@@ -1,0 +1,156 @@
+.dictionary{
+    margin-top: 3em;
+    gap: 3em;
+    flex-direction: column;
+    display: flex;
+
+    .keyword{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .word{
+            font-size: 3.5em;
+        }
+        .pronunciation{
+            font-family: Inter;
+            font-weight: 400;
+            color: var(--purple);
+            font-size: 1.4em;
+        }
+        
+        .pronouncing-audio{
+            border: 0;
+            background-color: rgb(164, 69, 237, 0.2);
+            border-radius: 100vh;
+            padding: 2.5em;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            &:hover{
+            background-color: rgb(164, 69, 237);
+            .play-icon{
+                color: white;
+            }
+                
+            }
+            .play-icon{
+                color: var(--purple);
+                font-size: 2em;
+            }
+        }
+    }
+
+    .definitions-content{
+        display: flex;
+        flex-direction: column;
+        gap: 1.5em;
+        font-size: 1.2em;
+
+        .meanings{
+            gap: 3em;
+            flex-direction: column;
+            display: flex;
+
+            .part-of-speech{
+                font-weight: 700;
+                font-style: italic;
+                font-size: 1.1em;
+                position: relative;
+                overflow-x: hidden;
+                &:after{
+                    bottom: 50%;
+                    transform: translateY(50%);
+                    margin-left: 20px;
+                    position: absolute;
+                    height: 1px;
+                    width: 100%;
+                    content: "";
+                    background-color: var(--line-color);
+                }
+            }
+            .meaning-wrapper{
+                .meaning{
+                    font-weight: 400;
+                    font-size: 1.2em;
+                    color: var(--gray);
+                    margin-bottom: 1.5em;
+                }
+                .definitions{
+                    margin-left: 2em;
+                    .definition{
+                        .example-text{
+                            color: var(--gray);
+                            margin-top: 1.3em;
+                        }
+                        padding-left: .4em;
+                        margin-bottom: 1.3em;
+                        &::marker{
+                            color: var(--purple);
+                        }
+                    }
+                    .definition:last-child{
+                        margin-bottom: 0;
+                    }
+                }
+            }
+            .synonyms-antonyms{
+                display: flex;
+                gap: 2em;
+                .sa-list{
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1.5em;
+                    row-gap: .5em;
+                    list-style: none;
+                    color: var(--purple);
+                    font-weight: 700;
+                    align-items: center;
+                    .sa-title{
+                        color: var(--gray);
+                        font-size: 1.2em;
+                        font-weight: 400;
+                        margin-right: 1em;
+                    }
+                }
+            }
+        }
+        .source{
+            hr{
+                margin-top: 1.5em;
+                margin-bottom: 1em;
+                border: 0;
+                border-top: 1px solid var(--line-color);
+            }
+            .source-list{
+                list-style: none;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5em;
+                row-gap: .5em;
+                font-size: .8em;
+                .source-title{
+                    color: var(--gray);
+                    margin-right: .5em;
+                }
+                .source-item{
+                    color: var(--text-color);
+                    display: flex;
+                    gap: .5em;
+                    align-items: center;
+                    &:hover{
+                        color: var(--purple);
+                        .forward-icon{
+                            color: var(--purple);
+                        }
+                    }
+                    .source-url{
+                        transition: color 150ms ease-in-out;
+                        color: inherit;
+                    }
+                    .forward-icon{
+                        color: var(--gray);
+                    }
+                }
+            }
+        }
+    }
+}

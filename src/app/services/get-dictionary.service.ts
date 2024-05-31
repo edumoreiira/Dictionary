@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Dictionary } from '../components/models/dictionary.interface';
 import { Observable } from 'rxjs';

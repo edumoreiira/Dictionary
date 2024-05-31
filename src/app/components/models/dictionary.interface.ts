@@ -6,7 +6,7 @@ export interface Dictionary{
     license: License,
     sourceUrls: string[]
 }
-interface Phonetics{
+export interface Phonetics{
     audio: string,
     sourceUrl: string,
     license: License

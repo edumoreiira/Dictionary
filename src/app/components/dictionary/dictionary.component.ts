@@ -1,33 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
-import { HttpClientModule } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Dictionary } from '../models/dictionary.interface';
+import { Dictionary, Phonetics } from '../models/dictionary.interface';
 
 @Component({
   selector: 'app-dictionary',
   standalone: true,
-  imports: [SearchbarComponent, CommonModule, HttpClientModule],
+  imports: [SearchbarComponent, CommonModule],
   providers:[GetDictionaryService],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss'
 })
-export class DictionaryComponent {
+export class DictionaryComponent implements OnInit{
 
   constructor(private dictionaryService: GetDictionaryService){
 
   }
 
+  ngOnInit(): void {
+    this.searchDictionary('book');
+  }
+
   $dictionary = new Observable<Dictionary[]>();
 
-  playAudio(){
-    const audio = new Audio('https://api.dictionaryapi.dev/media/pronunciations/en/keyboard-us.mp3');
-    audio.play()
+  validateAudio(dictionaryArr: Dictionary[]): string{
+    let link = "";
+
+    for(const dictionary of dictionaryArr){
+      const audio = dictionary.phonetics.find(phonetic => phonetic.audio)?.audio;
+
+      //verifica se audio tem valor
+      link = audio ? audio : "";
+      break
+    }
+    return link;
   }
+
   
+  playAudio(link: string){
+    if(link){
+      const audio = new Audio(link);
+      audio.play();
+    }
+  }
+
   searchDictionary(searchValue: string){
     this.$dictionary = this.dictionaryService.requestWord(searchValue);
   }
+  
 }
