@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { Dictionary, Phonetics } from '../models/dictionary.interface';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-dictionary',
@@ -14,16 +15,26 @@ import { Dictionary, Phonetics } from '../models/dictionary.interface';
   styleUrl: './dictionary.component.scss'
 })
 export class DictionaryComponent implements OnInit{
-
-  constructor(private dictionaryService: GetDictionaryService){
-
-  }
+  
+  $dictionary = new Observable<Dictionary[]>();
+  query: string = '';
+  hasError: boolean = false;
+  constructor(
+    private dictionaryService: GetDictionaryService,
+    private route: ActivatedRoute,
+    private router: Router
+  ){}
 
   ngOnInit(): void {
-    this.searchDictionary('book');
+    this.route.params.subscribe(params => {
+      this.query = params['query'];
+      if (this.query) {
+        this.hasError = false;
+        this.searchDictionary(this.query);
+      }
+    });
   }
 
-  $dictionary = new Observable<Dictionary[]>();
 
   validateAudio(dictionaryArr: Dictionary[]): string{
     let link = "";
@@ -39,15 +50,30 @@ export class DictionaryComponent implements OnInit{
   }
 
   
-  playAudio(link: string){
+  playAudio(link: string): void{
     if(link){
       const audio = new Audio(link);
       audio.play();
     }
   }
 
-  searchDictionary(searchValue: string){
-    this.$dictionary = this.dictionaryService.requestWord(searchValue);
+  // searchDictionary(searchValue: string): void{
+  //   this.$dictionary = this.dictionaryService.requestWord(searchValue);
+  // }
+
+  searchDictionary(searchValue: string): void {
+    console.log("estou funcionando")
+    this.$dictionary = this.dictionaryService.requestWord(searchValue).pipe(
+      catchError(err => {
+        this.hasError = true;
+        return of([]);
+      })
+    );
   }
   
+  navigateTo(word: string): void {
+    if (word) {
+      this.router.navigate(['/search', word]);
+    }
+  }
 }

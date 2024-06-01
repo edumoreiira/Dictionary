@@ -1,4 +1,4 @@
 <div [ngClass]="{'light-theme': !darkTheme, 'dark-theme' : darkTheme}" class="{{selectedFont}} content">
   <app-navbar (themeChanged)="darkTheme = $event" (fontChanged)="selectedFont = $event" />
-<app-dictionary/>
+  <router-outlet></router-outlet>
 </div>

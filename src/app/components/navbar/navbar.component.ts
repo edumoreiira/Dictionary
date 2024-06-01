@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 const slideUpDown = trigger('slideUpDown', [
   state('void', style({
@@ -34,7 +35,7 @@ const fadeInOut = trigger('fadeInOut', [
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
   animations: [slideUpDown, fadeInOut]

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-searchbar',
@@ -11,7 +12,12 @@ export class SearchbarComponent {
   
   @Output() searchInput = new EventEmitter<string>();
 
+  constructor(private router: Router){}
+  
   submit(search: string){
-    this.searchInput.emit(search);
+
+    if (search){
+      this.router.navigate(['search', search]);
+    }
   }
 }

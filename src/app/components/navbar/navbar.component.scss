@@ -8,11 +8,15 @@ nav{
     align-items: center;
     justify-content: space-between;
     gap: 1em;
+    .dictionary-logo{
+        cursor: pointer;
+    }
     .config{
         display: flex;
         align-items: center;
         gap: 1em;
         position: relative;
+        padding-right: 5px;
         .change-font{
             cursor: pointer;
             display: flex;
@@ -28,7 +32,7 @@ nav{
                 z-index: 2;
                 border-radius: .7em;
                 width: min(100vh, 150px);
-                background-color: white;
+                background-color: var(--secondary-bg-color);
                 box-shadow: rgba(0, 0, 0, 0.068) 0px 0px 20px;
                 margin-top: 1em;
                 top: 100%;

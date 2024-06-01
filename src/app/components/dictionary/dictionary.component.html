@@ -1,59 +1,73 @@
 <main class="container">
-    <app-searchbar (searchInput)="searchDictionary($event)"/>
-    <div *ngIf="$dictionary | async as dictionary" class="dictionary">
-        <div class="keyword">
-            <div class="word-wrapper">
-                <h1 class="word">{{dictionary[0].word}}</h1>
-                <span class="pronunciation">{{dictionary[0].phonetic}}</span>
+    <app-searchbar />
+
+    <ng-template #noResults>
+        <div class="no-results">
+            <h1>No results found for: <b>{{query}}</b></h1>
+        </div>
+    </ng-template>
+
+
+
+    <div *ngIf="!hasError; else noResults">
+        <div *ngIf="$dictionary | async as dictionary" class="dictionary">
+            <div class="keyword">
+                <div class="word-wrapper">
+                    <h1 class="word">{{dictionary[0].word}}</h1>
+                    <span class="pronunciation">{{dictionary[0].phonetic}}</span>
+                </div>
+
+                <button *ngIf="validateAudio(dictionary)" (click)="playAudio(validateAudio(dictionary))" type="button"
+                    title="Play Audio" class="pronouncing-audio">
+                    <i class="fi fi-ss-play play-icon"></i>
+                </button>
             </div>
 
-            <button 
-            *ngIf="validateAudio(dictionary)" 
-            (click)="playAudio(validateAudio(dictionary))" 
-            type="button" title="Play Audio" class="pronouncing-audio">
-                <i class="fi fi-ss-play play-icon"></i>
-            </button>
-        </div>
+            <div *ngFor="let content of dictionary" class="definitions-content">
 
-        <div *ngFor="let content of dictionary" class="definitions-content">
+                <div *ngFor="let meaning of content.meanings" class="meanings">
+                    <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
 
-            <div *ngFor="let meaning of content.meanings" class="meanings">
-                <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
+                    <div class="meaning-wrapper">
+                        <h4 class="meaning">Meaning</h4>
+                        <ul class="definitions">
+                            <li *ngFor="let item of meaning.definitions" class="definition">
+                                <p class="definition-text">{{item.definition}}</p>
+                                <p *ngIf="item.example" class="example-text">"{{item.example}}"</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div *ngIf="meaning.synonyms.length >= 1" class="synonyms-antonyms">
+                        <ul class="sa-list">
+                            <li>
+                                <h4 class="sa-title">Synonms</h4>
+                            </li>
+                            <li (click)="navigateTo(synonym)" *ngFor="let synonym of meaning.synonyms" class="sa-item">
+                                <span>{{synonym}}</span></li>
+                        </ul>
+                    </div>
+                    <div *ngIf="meaning.antonyms.length >= 1" class="synonyms-antonyms">
+                        <ul class="sa-list">
+                            <li>
+                                <h4 class="sa-title">Antonyms</h4>
+                            </li>
+                            <li (click)="navigateTo(antonym)" *ngFor="let antonym of meaning.antonyms" class="sa-item">
+                                <span>{{antonym}}</span></li>
+                        </ul>
+                    </div>
+                </div>
 
-                <div class="meaning-wrapper">
-                    <h4 class="meaning">Meaning</h4>
-                    <ul class="definitions">
-                        <li *ngFor="let item of meaning.definitions" class="definition">
-                            <p class="definition-text">{{item.definition}}</p>
-                            <p *ngIf="item.example" class="example-text">"{{item.example}}"</p>
+                <div class="source">
+                    <hr>
+                    <ul class="source-list">
+                        <li> <span class="source-title">Source</span> </li>
+                        <li *ngFor="let sourceUrl of content.sourceUrls" class="source-item">
+                            <a [href]="sourceUrl" class="source-url">{{sourceUrl}} <i class="fi fi-br-share-square forward-icon"></i></a>
                         </li>
                     </ul>
                 </div>
-                <div *ngIf="meaning.synonyms.length >= 1" class="synonyms-antonyms">
-                    <ul class="sa-list">
-                        <li><h4 class="sa-title">Synonms</h4></li>
-                        <li *ngFor="let synonym of meaning.synonyms" class="sa-item"><span>{{synonym}}</span></li>
-                    </ul>
-                </div>
-                <div *ngIf="meaning.antonyms.length >= 1" class="synonyms-antonyms">
-                    <h4 class="sa-title">Antonyms</h4>
-                    <ul class="sa-list">
-                        <li *ngFor="let antonym of meaning.antonyms" class="sa-item"><span>{{antonym}}</span></li>
-                    </ul>
-                </div>
-            </div>
 
-            <div class="source">
-                <hr>
-                <ul class="source-list">
-                    <li> <span class="source-title">Source</span> </li>
-                    <li *ngFor="let sourceUrl of content.sourceUrls" class="source-item">
-                        <a [href]="sourceUrl" class="source-url">{{sourceUrl}}</a>
-                        <i class="fi fi-br-share-square forward-icon"></i>
-                    </li>
-                </ul>
             </div>
-
         </div>
     </div>
 </main>

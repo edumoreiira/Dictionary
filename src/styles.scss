@@ -6,7 +6,7 @@
 
 .container{
     max-width: calc(900px);
-    width: calc(100% - 100px);
+    width: calc(100% - 50px);
     margin: 0 auto;
     padding-bottom: 3em;
 }
@@ -32,6 +32,7 @@
     --moon: #a445ed;
     --search-bg: hsl(0deg, 0%, 12%);
     --gray: #757575;
+    --secondary-bg-color: #191919;
     }
 
 .light-theme{
@@ -43,6 +44,7 @@
     --moon: gray;
     --search-bg: hsl(0deg, 0%, 96%);
     --gray: #757575;
+    --secondary-bg-color: #fff;
     }
 
 .fi{
