@@ -2,7 +2,7 @@
     <app-searchbar />
 
     <ng-template #noResults>
-        <div class="no-results">
+        <div class="no-results" @animateElement>
             <h1>No results found for: <b>{{query}}</b></h1>
         </div>
     </ng-template>
@@ -10,8 +10,8 @@
 
 
     <div *ngIf="!hasError; else noResults">
-        <div *ngIf="$dictionary | async as dictionary" class="dictionary">
-            <div class="keyword">
+        <div *ngIf="$dictionary | async as dictionary" class="dictionary" @parentAnimation>
+            <div class="keyword" @animateElement>
                 <div class="word-wrapper">
                     <h1 class="word">{{dictionary[0].word}}</h1>
                     <span class="pronunciation">{{dictionary[0].phonetic}}</span>
@@ -23,7 +23,7 @@
                 </button>
             </div>
 
-            <div *ngFor="let content of dictionary" class="definitions-content">
+            <div *ngFor="let content of dictionary" class="definitions-content"  @animateElement>
 
                 <div *ngFor="let meaning of content.meanings" class="meanings">
                     <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>

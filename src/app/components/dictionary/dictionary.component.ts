@@ -5,6 +5,30 @@ import { GetDictionaryService } from '../../services/get-dictionary.service';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { Dictionary, Phonetics } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
+import { animate, animateChild, query, state, style, transition, trigger } from '@angular/animations';
+
+//força o elemento pai esperar a animacao do elemento filho, para se remover do DOM
+const parentAnimation =  trigger('parentAnimation', [
+  transition(':enter, :leave', [
+    query('@animateElement', animateChild(), { optional: true })
+  ])
+])
+
+const elementAnimation = trigger('animateElement', [
+  state('void', style({
+    opacity: 0
+  })),
+  transition(':enter', [
+    style({
+      transform: 'translateY(30px)'
+    }),
+    animate('400ms ease-out')
+  ]),
+  transition(':leave', [
+    animate('100ms ease-in')
+  ])
+
+]);
 
 @Component({
   selector: 'app-dictionary',
@@ -12,7 +36,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   imports: [SearchbarComponent, CommonModule],
   providers:[GetDictionaryService],
   templateUrl: './dictionary.component.html',
-  styleUrl: './dictionary.component.scss'
+  styleUrl: './dictionary.component.scss',
+  animations: [elementAnimation, parentAnimation]
 })
 export class DictionaryComponent implements OnInit{
   
@@ -57,12 +82,7 @@ export class DictionaryComponent implements OnInit{
     }
   }
 
-  // searchDictionary(searchValue: string): void{
-  //   this.$dictionary = this.dictionaryService.requestWord(searchValue);
-  // }
-
   searchDictionary(searchValue: string): void {
-    console.log("estou funcionando")
     this.$dictionary = this.dictionaryService.requestWord(searchValue).pipe(
       catchError(err => {
         this.hasError = true;
