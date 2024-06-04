@@ -43,7 +43,11 @@
                                 <h4 class="sa-title">Synonms</h4>
                             </li>
                             <li (click)="checkAvailableSA(synonym)" *ngFor="let synonym of meaning.synonyms" class="sa-item">
-                                <span>{{synonym}}</span></li>
+                                <span class="sa-result">{{synonym}}</span>
+                                <span *ngIf="
+                                isSAAvailable.word == synonym && isSAAvailable.isAvailable == false"
+                                class="unavailable-word" @popUp><b>word not found!</b></span>
+                            </li>
                         </ul>
                     </div>
                     <div *ngIf="meaning.antonyms.length >= 1" class="synonyms-antonyms">
@@ -52,7 +56,11 @@
                                 <h4 class="sa-title">Antonyms</h4>
                             </li>
                             <li (click)="checkAvailableSA(antonym)" *ngFor="let antonym of meaning.antonyms" class="sa-item">
-                                <span>{{antonym}}</span></li>
+                                <span class="sa-result">{{antonym}}</span>
+                                <span *ngIf="
+                                isSAAvailable.word == antonym && isSAAvailable.isAvailable == false"
+                                class="unavailable-word" @popUp><b>word not found!</b></span>
+                            </li>
                         </ul>
                     </div>
                 </div>

@@ -2,33 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
-import { Observable, catchError, map, of, shareReplay, tap, throwError } from 'rxjs';
-import { Dictionary, Phonetics } from '../models/dictionary.interface';
+import { Observable, catchError, of, shareReplay, throwError } from 'rxjs';
+import { Dictionary } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
-import { animate, animateChild, query, state, style, transition, trigger } from '@angular/animations';
-
-//força o elemento pai esperar a animacao do elemento filho, para se remover do DOM
-const parentAnimation =  trigger('parentAnimation', [
-  transition(':enter, :leave', [
-    query('@animateElement', animateChild(), { optional: true })
-  ])
-])
-
-const elementAnimation = trigger('animateElement', [
-  state('void', style({
-    opacity: 0
-  })),
-  transition(':enter', [
-    style({
-      transform: 'translateY(30px)'
-    }),
-    animate('400ms ease-out')
-  ]),
-  transition(':leave', [
-    animate('100ms ease-in')
-  ])
-
-]);
+import { elementAnimation, parentAnimation, popUpAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-dictionary',
@@ -37,16 +14,20 @@ const elementAnimation = trigger('animateElement', [
   providers:[GetDictionaryService],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
-  animations: [elementAnimation, parentAnimation]
+  animations: [elementAnimation, parentAnimation, popUpAnimation]
 })
 export class DictionaryComponent implements OnInit{
   
   dictionary$ = new Observable<Dictionary[]>();
   private dictionaryRequests: { [word: string]: Observable<Dictionary[]> } = {};
-  
-
   query: string = '';
   hasError: boolean = false;
+  isSAAvailable: { 
+    word?: string,
+    isAvailable?: boolean
+  } = {};
+
+
   constructor(
     private dictionaryService: GetDictionaryService,
     private route: ActivatedRoute,
@@ -100,14 +81,16 @@ export class DictionaryComponent implements OnInit{
     }
   }
 
-  checkAvailableSA(word: string){
+  checkAvailableSA(word: string): void{
     const checkSubscription = this.getDictionary(word).subscribe({
       next: ok => { 
         this.navigateTo(word);
+        this.isSAAvailable = {word: word, isAvailable: true}
         checkSubscription.unsubscribe(); 
       },
       error: err => {
         console.error(err);
+        this.isSAAvailable = {word: word, isAvailable: false}
         checkSubscription.unsubscribe();
       }
     })
@@ -125,4 +108,6 @@ export class DictionaryComponent implements OnInit{
     }
     return this.dictionaryRequests[word];
   }
+
+  
 }
