@@ -25,7 +25,7 @@
 
             <div *ngFor="let content of dictionary" class="definitions-content"  @animateElement>
 
-                <div *ngFor="let meaning of content.meanings" class="meanings">
+                <div *ngFor="let meaning of content.meanings" class="meanings" #meanings>
                     <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
 
                     <div class="meaning-wrapper">

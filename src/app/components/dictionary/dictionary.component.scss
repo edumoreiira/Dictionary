@@ -51,7 +51,15 @@
             gap: 3em;
             flex-direction: column;
             display: flex;
-
+            &:not(.first){
+                opacity: 0;
+                transform: translateY(-80px);
+                transition: all 850ms ease-in-out;
+            }
+            &.on-view{
+                opacity: 1;
+                transform: translateY(0);
+            }
             .part-of-speech{
                 font-weight: 700;
                 font-style: italic;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
@@ -16,7 +16,7 @@ import { elementAnimation, parentAnimation, popUpAnimation } from '../../animati
   styleUrl: './dictionary.component.scss',
   animations: [elementAnimation, parentAnimation, popUpAnimation]
 })
-export class DictionaryComponent implements OnInit{
+export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChecked{
   
   dictionary$ = new Observable<Dictionary[]>();
   private dictionaryRequests: { [word: string]: Observable<Dictionary[]> } = {};
@@ -26,6 +26,7 @@ export class DictionaryComponent implements OnInit{
     word?: string,
     isAvailable?: boolean
   } = {};
+  private observer: IntersectionObserver | undefined;
 
 
   constructor(
@@ -44,13 +45,41 @@ export class DictionaryComponent implements OnInit{
     });
   }
 
+  ngAfterViewInit(): void {
+    const options = {
+      root: null,
+      threshold: 0,
+      rootMargin: "-100px"
+    }
+     this.observer = new IntersectionObserver(function
+      (entries, observer){
+        entries.forEach(entry => {
+          if(!entry.isIntersecting){
+            return;
+          }
+          entry.target.classList.add("on-view");
+          observer.unobserve(entry.target);
+        });   
+    }, options);
+  }
+  
+  ngAfterViewChecked(): void {
+    const meanings = document.querySelectorAll('.meanings');
+    meanings.forEach((meaning, index) => {
+      if(index === 0){
+        meaning.classList.add('first');
+        return
+      }
+      if(!meaning.classList.contains('on-view')){
+        this.observer!.observe(meaning)
+      }
+    })
+  }
 
   validateAudio(dictionaryArr: Dictionary[]): string{
     let link = "";
-
     for(const dictionary of dictionaryArr){
       const audio = dictionary.phonetics.find(phonetic => phonetic.audio)?.audio;
-
       //verifica se audio tem valor
       link = audio ? audio : "";
       break
@@ -108,6 +137,4 @@ export class DictionaryComponent implements OnInit{
     }
     return this.dictionaryRequests[word];
   }
-
-  
 }
