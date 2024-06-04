@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { Dictionary, Phonetics } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animate, animateChild, query, state, style, transition, trigger } from '@angular/animations';
@@ -41,7 +41,10 @@ const elementAnimation = trigger('animateElement', [
 })
 export class DictionaryComponent implements OnInit{
   
-  $dictionary = new Observable<Dictionary[]>();
+  dictionary$ = new Observable<Dictionary[]>();
+  private dictionaryRequests: { [word: string]: Observable<Dictionary[]> } = {};
+  
+
   query: string = '';
   hasError: boolean = false;
   constructor(
@@ -83,7 +86,7 @@ export class DictionaryComponent implements OnInit{
   }
 
   searchDictionary(searchValue: string): void {
-    this.$dictionary = this.dictionaryService.requestWord(searchValue).pipe(
+    this.dictionary$ = this.getDictionary(searchValue).pipe(
       catchError(err => {
         this.hasError = true;
         return of([]);
@@ -95,5 +98,31 @@ export class DictionaryComponent implements OnInit{
     if (word) {
       this.router.navigate(['/search', word]);
     }
+  }
+
+  checkAvailableSA(word: string){
+    const checkSubscription = this.getDictionary(word).subscribe({
+      next: ok => { 
+        this.navigateTo(word);
+        checkSubscription.unsubscribe(); 
+      },
+      error: err => {
+        console.error(err);
+        checkSubscription.unsubscribe();
+      }
+    })
+  }
+
+  private getDictionary(word: string): Observable<Dictionary[]>{
+    if(!this.dictionaryRequests[word]){
+      this.dictionaryRequests[word] = this.dictionaryService.requestWord(word).pipe(
+        shareReplay(1),
+        catchError(err => {
+          delete this.dictionaryRequests[word]
+          return throwError(() => new Error('Word not found.'));
+        })
+      )
+    }
+    return this.dictionaryRequests[word];
   }
 }

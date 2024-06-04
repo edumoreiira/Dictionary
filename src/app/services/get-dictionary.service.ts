@@ -12,17 +12,9 @@ export class GetDictionaryService {
 
   private url:string = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 
-  // requestWord(word: string): Observable<Dictionary[]>{
-
-  //   return this.http.get<Dictionary[]>(this.url + word);
-  // }
 
   requestWord(word: string): Observable<Dictionary[]> {
-    return this.http.get<Dictionary[]>(this.url + word).pipe(
-      catchError(err => {
-        return throwError(() => err);
-      })
-    );
+    return this.http.get<Dictionary[]>(this.url + word)
   }
   
 }
