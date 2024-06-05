@@ -25,7 +25,7 @@
 
             <div *ngFor="let content of dictionary" class="definitions-content"  @animateElement>
 
-                <div *ngFor="let meaning of content.meanings" class="meanings" #meanings>
+                <div *ngFor="let meaning of content.meanings" class="meanings">
                     <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
 
                     <div class="meaning-wrapper">
@@ -50,7 +50,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div *ngIf="meaning.antonyms.length >= 1" class="synonyms-antonyms">
+                    <div  *ngIf="meaning.antonyms.length >= 1" class="synonyms-antonyms">
                         <ul class="sa-list">
                             <li>
                                 <h4 class="sa-title">Antonyms</h4>

@@ -1,8 +1,8 @@
-import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SearchbarComponent } from '../searchbar/searchbar.component';
 import { CommonModule } from '@angular/common';
 import { GetDictionaryService } from '../../services/get-dictionary.service';
-import { Observable, catchError, of, shareReplay, throwError } from 'rxjs';
+import { Observable, Subscription, catchError, of, shareReplay, throwError } from 'rxjs';
 import { Dictionary } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { elementAnimation, parentAnimation, popUpAnimation } from '../../animations/animations';
@@ -16,7 +16,7 @@ import { elementAnimation, parentAnimation, popUpAnimation } from '../../animati
   styleUrl: './dictionary.component.scss',
   animations: [elementAnimation, parentAnimation, popUpAnimation]
 })
-export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChecked{
+export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked{
   
   dictionary$ = new Observable<Dictionary[]>();
   private dictionaryRequests: { [word: string]: Observable<Dictionary[]> } = {};
@@ -27,6 +27,8 @@ export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChec
     isAvailable?: boolean
   } = {};
   private observer: IntersectionObserver | undefined;
+  checkSubscription: Subscription | undefined;
+  routeSubscription: Subscription | undefined;
 
 
   constructor(
@@ -36,7 +38,7 @@ export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChec
   ){}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.routeSubscription = this.route.params.subscribe(params => {
       this.query = params['query'];
       if (this.query) {
         this.hasError = false;
@@ -46,34 +48,49 @@ export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngAfterViewInit(): void {
-    const options = {
-      root: null,
-      threshold: 0,
-      rootMargin: "-100px"
+    //prevents the code to run before window(browser) loads && verify if IntersectionObserver API is available.
+    if(typeof window !== 'undefined' && 'IntersectionObserver' in window){
+      
+      const options = {
+        root: null,
+        threshold: 0,
+        rootMargin: "-100px"
+      }
+       this.observer = new IntersectionObserver(function
+        (entries, observer){
+          entries.forEach(entry => {
+            if(!entry.isIntersecting){
+              return;
+            }
+            entry.target.classList.add("on-view");
+            observer.unobserve(entry.target);
+          });   
+      }, options);
     }
-     this.observer = new IntersectionObserver(function
-      (entries, observer){
-        entries.forEach(entry => {
-          if(!entry.isIntersecting){
-            return;
-          }
-          entry.target.classList.add("on-view");
-          observer.unobserve(entry.target);
-        });   
-    }, options);
-  }
+
+    }
   
   ngAfterViewChecked(): void {
-    const meanings = document.querySelectorAll('.meanings');
-    meanings.forEach((meaning, index) => {
-      if(index === 0){
-        meaning.classList.add('first');
-        return
-      }
-      if(!meaning.classList.contains('on-view')){
-        this.observer!.observe(meaning)
-      }
-    })
+    //verify if observer and document exists, it prevents to run this function before page loads.
+    if(this.observer && typeof document !== 'undefined'){
+      
+      const meanings = document.querySelectorAll('.meanings');
+      meanings.forEach((meaning, index) => {
+        if(index === 0){
+          meaning.classList.add('first');
+          return
+        }
+        if(!meaning.classList.contains('on-view')){
+          this.observer!.observe(meaning)
+        }
+      })
+    }
+  }
+
+  ngOnDestroy(): void {
+    if(this.routeSubscription){
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   validateAudio(dictionaryArr: Dictionary[]): string{
@@ -111,16 +128,14 @@ export class DictionaryComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   checkAvailableSA(word: string): void{
-    const checkSubscription = this.getDictionary(word).subscribe({
+    this.checkSubscription = this.getDictionary(word).subscribe({
       next: ok => { 
         this.navigateTo(word);
         this.isSAAvailable = {word: word, isAvailable: true}
-        checkSubscription.unsubscribe(); 
       },
       error: err => {
         console.error(err);
         this.isSAAvailable = {word: word, isAvailable: false}
-        checkSubscription.unsubscribe();
       }
     })
   }
