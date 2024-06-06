@@ -51,12 +51,12 @@
             gap: 3em;
             flex-direction: column;
             display: flex;
-            &:not(.first){
+            &.animate-entry{
                 opacity: 0;
                 transform: translateY(-80px);
                 transition: all 850ms ease-in-out;
             }
-            &.on-view{
+            &.animate-entry.on-view{
                 opacity: 1;
                 transform: translateY(0);
             }

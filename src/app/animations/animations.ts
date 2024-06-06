@@ -21,6 +21,18 @@ export const elementAnimation = trigger('animateElement', [
     ])
 ]);
 
+export const errorAnimation = trigger('animateError', [
+  state('void', style({
+      opacity: 0
+  })),
+  transition(':enter', [
+      style({
+          transform: 'translateY(30px)'
+      }),
+      animate('400ms ease-out')
+  ])
+]);
+
 export const popUpAnimation = trigger('popUp', [
   state('void', style({
     width: 0,

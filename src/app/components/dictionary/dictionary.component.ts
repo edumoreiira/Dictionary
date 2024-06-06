@@ -5,7 +5,7 @@ import { GetDictionaryService } from '../../services/get-dictionary.service';
 import { Observable, Subscription, catchError, of, shareReplay, throwError } from 'rxjs';
 import { Dictionary } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
-import { elementAnimation, parentAnimation, popUpAnimation } from '../../animations/animations';
+import { elementAnimation, errorAnimation, parentAnimation, popUpAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-dictionary',
@@ -14,7 +14,7 @@ import { elementAnimation, parentAnimation, popUpAnimation } from '../../animati
   providers:[GetDictionaryService],
   templateUrl: './dictionary.component.html',
   styleUrl: './dictionary.component.scss',
-  animations: [elementAnimation, parentAnimation, popUpAnimation]
+  animations: [elementAnimation, parentAnimation, popUpAnimation, errorAnimation]
 })
 export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked{
   
@@ -22,13 +22,14 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   private dictionaryRequests: { [word: string]: Observable<Dictionary[]> } = {};
   query: string = '';
   hasError: boolean = false;
+  private observer: IntersectionObserver | undefined;
+  checkSubscription: Subscription | undefined;
+  routeSubscription: Subscription | undefined;
+  errorMessage: string = '';
   isSAAvailable: { 
     word?: string,
     isAvailable?: boolean
   } = {};
-  private observer: IntersectionObserver | undefined;
-  checkSubscription: Subscription | undefined;
-  routeSubscription: Subscription | undefined;
 
 
   constructor(
@@ -40,9 +41,22 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   ngOnInit(): void {
     this.routeSubscription = this.route.params.subscribe(params => {
       this.query = params['query'];
-      if (this.query) {
-        this.hasError = false;
-        this.searchDictionary(this.query);
+
+      if(this.query){
+        
+        if (this.query.length > 30) {
+          this.hasError = true;
+          this.errorMessage = 'Maximum characteres (30)'
+  
+        }else if(!this.filterSearch(this.query)){
+          this.hasError = true;
+          this.errorMessage = 'No special characteres allowed'
+          
+        }else{
+          this.hasError = false;
+          this.searchDictionary(this.query);
+          this.errorMessage = '';
+        }  
       }
     });
   }
@@ -60,6 +74,7 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
         (entries, observer){
           entries.forEach(entry => {
             if(!entry.isIntersecting){
+              entry.target.classList.add("animate-entry")
               return;
             }
             entry.target.classList.add("on-view");
@@ -76,10 +91,6 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
       
       const meanings = document.querySelectorAll('.meanings');
       meanings.forEach((meaning, index) => {
-        if(index === 0){
-          meaning.classList.add('first');
-          return
-        }
         if(!meaning.classList.contains('on-view')){
           this.observer!.observe(meaning)
         }
@@ -104,7 +115,11 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
     return link;
   }
 
-  
+  filterSearch(search: string){
+    const pattern = /^[a-zA-Z0-9 .,]+$/;
+    return pattern.test(search);
+  }
+
   playAudio(link: string): void{
     if(link){
       const audio = new Audio(link);
@@ -130,6 +145,9 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   checkAvailableSA(word: string): void{
     this.checkSubscription = this.getDictionary(word).subscribe({
       next: ok => { 
+        const top = document.querySelector('#top');
+        
+        top?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         this.navigateTo(word);
         this.isSAAvailable = {word: word, isAvailable: true}
       },

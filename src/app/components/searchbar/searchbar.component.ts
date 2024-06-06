@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter, shareReplay, take } from 'rxjs';
 
 @Component({
   selector: 'app-searchbar',
@@ -12,33 +12,44 @@ import { Subscription } from 'rxjs';
 export class SearchbarComponent implements AfterViewInit, OnInit, OnDestroy {
   
   // @Output() searchInput = new EventEmitter<string>();
-  @ViewChild('searchInput') searchInputNative!: ElementRef<HTMLInputElement>;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
-  searchInput!: HTMLInputElement;
   querySubscription: Subscription | undefined;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute
   
-  ){}
+  ){ }
+
+
   ngOnInit(): void {
-    
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.changeSearchbarValueToQuery();
+   });
+  }
+
+  ngAfterViewInit(): void {
+    this.changeSearchbarValueToQuery();
   }
   
-  ngAfterViewInit(): void {
-    this.searchInput = this.searchInputNative.nativeElement;
-    this.querySubscription = this.route.params.subscribe(params => {
-      this.searchInput.value = params['query'] || ''
-      this.querySubscription?.unsubscribe();
-      console.log("desinscrito")
-    });
-  }
 
   ngOnDestroy(): void {
     if (this.querySubscription) {
       this.querySubscription.unsubscribe();
     }
+  }
+
+  changeSearchbarValueToQuery(){
+    this.querySubscription = this.route.params.pipe(
+      take(1),
+      shareReplay(1)
+    ).subscribe(params => {
+      this.searchInput.nativeElement.value = params['query'] || '';
+      this.querySubscription?.unsubscribe();
+    })
   }
 
   submit(search: string){

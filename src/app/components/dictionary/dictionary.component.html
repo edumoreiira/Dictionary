@@ -2,8 +2,12 @@
     <app-searchbar />
 
     <ng-template #noResults>
-        <div class="no-results" @animateElement>
-            <h1>No results found for: <b>{{query}}</b></h1>
+        <div class="no-results">
+            @if(errorMessage){
+                <h1 @animateError>Invalid search: <b>{{errorMessage}}</b></h1>
+            }@else {
+                <h1 @animateError>No results found for: <b>{{query}}</b></h1>
+            }
         </div>
     </ng-template>
 
