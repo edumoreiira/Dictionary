@@ -11,10 +11,14 @@
         </div>
     </ng-template>
 
-
-
+    
+    
     <div *ngIf="!hasError; else noResults">
-        <div *ngIf="dictionary$ | async as dictionary" class="dictionary" @parentAnimation>
+        <ng-template #loadingScreen>
+            <h1 @animateElement>loading</h1>
+        </ng-template>
+        
+        <div *ngIf="dictionary$ | async as dictionary; else loadingScreen" class="dictionary" @parentAnimation>
             <div class="keyword" @animateElement>
                 <div class="word-wrapper">
                     <h1 class="word">{{dictionary[0].word}}</h1>
@@ -27,9 +31,9 @@
                 </button>
             </div>
 
-            <div *ngFor="let content of dictionary" class="definitions-content"  @animateElement>
+            <div *ngFor="let content of dictionary" class="definitions-content">
 
-                <div *ngFor="let meaning of content.meanings" class="meanings">
+                <div *ngFor="let meaning of content.meanings" class="meanings" @animateElement>
                     <h3 class="part-of-speech">{{meaning.partOfSpeech}}</h3>
 
                     <div class="meaning-wrapper">

@@ -46,20 +46,20 @@
         flex-direction: column;
         gap: 1.5em;
         font-size: 1.2em;
+        .animate-entry{
+            opacity: 0;
+            transform: translateY(-80px);
+            transition: all 850ms ease-in-out;
+        &.on-view{
+            opacity: 1;
+            transform: translateY(0);
+            }
+        }
 
         .meanings{
             gap: 3em;
             flex-direction: column;
             display: flex;
-            &.animate-entry{
-                opacity: 0;
-                transform: translateY(-80px);
-                transition: all 850ms ease-in-out;
-            }
-            &.animate-entry.on-view{
-                opacity: 1;
-                transform: translateY(0);
-            }
             .part-of-speech{
                 font-weight: 700;
                 font-style: italic;

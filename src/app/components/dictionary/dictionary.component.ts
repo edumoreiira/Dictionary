@@ -76,7 +76,7 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
             if(!entry.isIntersecting){
               entry.target.classList.add("animate-entry")
               return;
-            }
+              }
             entry.target.classList.add("on-view");
             observer.unobserve(entry.target);
           });   
@@ -89,11 +89,16 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
     //verify if observer and document exists, it prevents to run this function before page loads.
     if(this.observer && typeof document !== 'undefined'){
       
-      const meanings = document.querySelectorAll('.meanings');
-      meanings.forEach((meaning, index) => {
-        if(!meaning.classList.contains('on-view')){
-          this.observer!.observe(meaning)
-        }
+      const definitions = document.querySelectorAll('.definitions-content');
+      definitions.forEach((definition) => {
+        const childrenHTML = definition.children;  //creates an array(HTMLCollection) of definition`s childs. 
+        const children = Array.from(childrenHTML); //turn the HTMLCollection into a standard array.
+
+        children.forEach(child => {
+          if(!child.classList.contains('on-view')){
+            this.observer!.observe(child);
+          }
+        })
       })
     }
   }
@@ -116,7 +121,7 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   }
 
   filterSearch(search: string){
-    const pattern = /^[a-zA-Z0-9 .,]+$/;
+    const pattern = /^[a-zA-Z0-9 .,-]+$/;
     return pattern.test(search);
   }
 
