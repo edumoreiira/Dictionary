@@ -15,7 +15,9 @@
     
     <div *ngIf="!hasError; else noResults">
         <ng-template #loadingScreen>
-            <h1 @animateElement>loading</h1>
+            <div class="loading-screen" @animateElement>
+                <img class="loading-gif" src="assets/Hand-Loading.gif" alt="">
+            </div>
         </ng-template>
         
         <div *ngIf="dictionary$ | async as dictionary; else loadingScreen" class="dictionary" @parentAnimation>

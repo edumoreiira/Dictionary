@@ -48,7 +48,7 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
           this.hasError = true;
           this.errorMessage = 'Maximum characteres (30)'
   
-        }else if(!this.filterSearch(this.query)){
+        }else if( !this.filterSearch(this.query) ){
           this.hasError = true;
           this.errorMessage = 'No special characteres allowed'
           

@@ -226,3 +226,17 @@
         }
     }
 }
+
+.loading-screen{
+    user-select: none;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    .loading-gif{
+        max-width: 100%;
+        margin-top: -5%;
+    }
+}
