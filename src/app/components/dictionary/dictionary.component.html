@@ -14,13 +14,13 @@
     
     
     <div *ngIf="!hasError; else noResults">
-        <ng-template #loadingScreen>
-            <div class="loading-screen" @animateElement>
+        <ng-template #loadingScreenTemplate>
+            <div *ngIf="loadingScreen" class="loading-screen" @animateElement>
                 <img class="loading-gif" src="assets/Hand-Loading.gif" alt="">
             </div>
         </ng-template>
         
-        <div *ngIf="dictionary$ | async as dictionary; else loadingScreen" class="dictionary" @parentAnimation>
+        <div *ngIf="dictionary$ | async as dictionary; else loadingScreenTemplate" class="dictionary" @parentAnimation>
             <div class="keyword" @animateElement>
                 <div class="word-wrapper">
                     <h1 class="word">{{dictionary[0].word}}</h1>
