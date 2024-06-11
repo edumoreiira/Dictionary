@@ -135,6 +135,7 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
 
   searchDictionary(searchValue: string): void {
     this.dictionary$ = this.getDictionary(searchValue).pipe(
+      take(1),
       catchError(err => {
         this.hasError = true;
         return of([]);
@@ -149,7 +150,10 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   }
 
   checkAvailableSA(word: string): void {
-    this.checkSubscription = this.getDictionary(word).subscribe({
+    this.checkSubscription = this.getDictionary(word).pipe(
+      take(1)
+    )
+    .subscribe({
       next: ok => {
         const top = document.querySelector('#top');
 
@@ -164,16 +168,22 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
     })
   }
 
-  private getDictionary(word: string): Observable<Dictionary[]> {
+  deleteLastDictionaryRequest(): void{
+    const requests = this.dictionaryRequests;
+    const firstRequest = Object.keys(requests)[0];
+    delete requests[firstRequest];
+  }
 
+  private getDictionary(word: string): Observable<Dictionary[]> {
+    
+    //clear last item of cache if > 25 dictionary searches;
+    const dictionaryLength = Object.keys(this.dictionaryRequests).length;
+    if(dictionaryLength > 25){ this.deleteLastDictionaryRequest(); }
 
     if (!this.dictionaryRequests[word]) {
       const request$ = this.dictionaryService.requestWord(word).pipe(
-        tap(() => {
-          
-          this.loadingScreen = false
-          console.log("loading screen off",this.loadingScreen);
-        }),
+        tap(() => this.loadingScreen = false),
+        take(1),
         shareReplay(),
         catchError(err => {
           delete this.dictionaryRequests[word]
@@ -182,11 +192,8 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
       )
 
       const delay$ = timer(600).pipe(
-        tap(() => {
-          
-          this.loadingScreen = true
-          console.log("loading screen on",this.loadingScreen);
-        })
+        take(1),
+        tap(() => this.loadingScreen = true)
       )
 
       this.dictionaryRequests[word] = race(
