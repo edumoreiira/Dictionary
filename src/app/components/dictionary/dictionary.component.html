@@ -1,5 +1,5 @@
 <main class="container">
-    <app-searchbar />
+    <app-searchbar *ngIf="toggleSwitchFont" @animateElement />
 
     <ng-template #noResults>
         <div class="no-results">
@@ -12,8 +12,8 @@
     </ng-template>
 
     
-    
-    <div *ngIf="!hasError; else noResults">
+    <ng-container *ngIf="toggleSwitchFont">
+    <ng-container *ngIf="!hasError; else noResults">
         <ng-template #loadingScreenTemplate>
             <div *ngIf="loadingScreen" class="loading-screen" @animateElement>
                 <img class="loading-gif" src="assets/Hand-Loading.gif" alt="">
@@ -80,12 +80,15 @@
                     <ul class="source-list">
                         <li> <span class="source-title">Source</span> </li>
                         <li *ngFor="let sourceUrl of content.sourceUrls" class="source-item">
-                            <a [href]="sourceUrl" class="source-url">{{sourceUrl}} <i class="fi fi-br-share-square forward-icon"></i></a>
+                            <a [href]="sourceUrl" target="_blank" class="source-url">{{sourceUrl}} 
+                                <i class="fi fi-br-share-square forward-icon"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
 
             </div>
         </div>
-    </div>
+    </ng-container>
+</ng-container>
 </main>

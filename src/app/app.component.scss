@@ -6,5 +6,26 @@
     color: var(--text-color);
     background-color: var(--bg-color);
     height: 100vh;
-    overflow: auto;
+    overflow-y: scroll;
+
+    --sb-track-color: var(--scroll-bg);
+    --sb-thumb-color: #a445ed;
+    --sb-size: 10px;
+    &::-webkit-scrollbar {
+        width: var(--sb-size);
+      }
+    
+      &::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 0px;
+      }
+    
+      &::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 0px;
+      }
+    
+      @supports not selector(::-webkit-scrollbar) {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+      }
 }

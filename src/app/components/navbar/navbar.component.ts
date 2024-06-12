@@ -1,7 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SwitchFontService } from '../../services/switch-font.service';
+import { FormsModule } from '@angular/forms';
 
 const slideUpDown = trigger('slideUpDown', [
   state('void', style({
@@ -35,19 +37,30 @@ const fadeInOut = trigger('fadeInOut', [
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
   animations: [slideUpDown, fadeInOut]
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit{
   
   @Output() fontChanged = new EventEmitter<string>();
-  @Output() themeChanged = new EventEmitter<boolean>();
+  // @Output() themeChanged = new EventEmitter<boolean>();
   selectedFont: string = 'Serif';
   isFontOpen: boolean = false;
   fadeInOutState: string = 'in';
-  darkTheme: boolean = false;
+  darkTheme: boolean = true;
+
+  constructor(private switchFontService: SwitchFontService){}
+  
+  ngOnInit(): void {
+    if(typeof window !== 'undefined'){
+      const dark = window.matchMedia('(prefers-color-scheme: dark)');
+      this.darkTheme = dark.matches;
+      this.applyTheme(this.darkTheme);
+    }
+  }
+  
 
   //Verifica se o click foi fora da div change-font
   @HostListener('document:click', ['$event'])
@@ -74,15 +87,28 @@ export class NavbarComponent {
     if(font === this.selectedFont) return
     // animacao ao trocar de nome
     this.fadeInOutState = 'out';
+    this.switchFontService.emmitSwitchFontEvent(false);
     setTimeout(() => {
       this.fadeInOutState = 'in';
       this.selectedFont = font;
       this.fontChanged.emit(this.selectedFont);
+      this.switchFontService.emmitSwitchFontEvent(true);
     },200);
   }
 
   toggleTheme(){
-    this.darkTheme = !this.darkTheme
-    this.themeChanged.emit(this.darkTheme);
+    this.applyTheme(this.darkTheme)
+  }
+
+  applyTheme(isDark:boolean){
+    const page = document.querySelector("#content");
+    
+    if(isDark){
+      page?.classList.add("dark-theme")
+      page?.classList.remove("light-theme")
+    }else{
+      page?.classList.add("light-theme")
+      page?.classList.remove("dark-theme")
+    }
   }
 }

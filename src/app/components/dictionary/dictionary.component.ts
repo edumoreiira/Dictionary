@@ -6,6 +6,7 @@ import { Observable, Subscription, catchError, finalize, map, merge, of, race, s
 import { Dictionary } from '../models/dictionary.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { elementAnimation, errorAnimation, parentAnimation, popUpAnimation } from '../../animations/animations';
+import { SwitchFontService } from '../../services/switch-font.service';
 
 @Component({
   selector: 'app-dictionary',
@@ -25,6 +26,8 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   private observer: IntersectionObserver | undefined;
   checkSubscription: Subscription | undefined;
   routeSubscription: Subscription | undefined;
+  toggleSwitchFontSubscription: Subscription | undefined;
+  toggleSwitchFont: boolean = true;
   errorMessage: string = '';
   loadingScreen: boolean = false;
   isSAAvailable: {
@@ -36,10 +39,13 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   constructor(
     private dictionaryService: GetDictionaryService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private switchFontService: SwitchFontService
   ) { }
 
   ngOnInit(): void {
+    this.toggleSwitchFontSubscription = this.switchFontService.getSwitchFont().subscribe(value => this.toggleSwitchFont = value)
+
     this.routeSubscription = this.route.params.subscribe(params => {
       this.query = params['query'];
 
@@ -107,6 +113,9 @@ export class DictionaryComponent implements OnInit, OnDestroy, AfterViewInit, Af
   ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
+    }
+    if(this.toggleSwitchFontSubscription){
+      this.toggleSwitchFontSubscription.unsubscribe();
     }
   }
 
